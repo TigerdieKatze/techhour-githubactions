@@ -1,0 +1,25 @@
+name: Issue Management
+
+on:
+  issues:
+    types: [opened, labeled]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-label issues
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue
+            if (issue.title.toLowerCase().includes('bug')) {
+              github.rest.issues.addLabels({
+                issue_number: issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: ['bug']
+              })
+            }
