@@ -1,23 +1,19 @@
 name: Issue Management
 
 on:
-  issues:
-    types:
-      - opened
-      - edited
-
+    issues:
+      types: [opened, edited]
+  
+permissions:
+    issues: write
+    contents: read
+  
 jobs:
-  auto-label:
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checkout the repository (required for some actions)
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Automatically label issues based on their content
-      - name: Auto-label issues
-        uses: actions/labeler@v4
+    triage:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: github/issue-labeler@v3.3
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/labeler.yml
+          enable-versioned-regex: 0
+          repo-token: ${{ github.token }}
