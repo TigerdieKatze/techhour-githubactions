@@ -2,24 +2,22 @@ name: Issue Management
 
 on:
   issues:
-    types: [opened, labeled]
-  pull_request:
-    types: [opened, synchronize]
+    types:
+      - opened
+      - edited
 
 jobs:
-  triage:
+  auto-label:
     runs-on: ubuntu-latest
+
     steps:
+      # Checkout the repository (required for some actions)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Automatically label issues based on their content
       - name: Auto-label issues
-        uses: actions/github-script@v6
+        uses: actions/labeler@v4
         with:
-          script: |
-            const issue = context.payload.issue
-            if (issue.title.toLowerCase().includes('bug')) {
-              github.rest.issues.addLabels({
-                issue_number: issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                labels: ['bug']
-              })
-            }
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml

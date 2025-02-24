@@ -1,0 +1,20 @@
+bug:
+  - "bug"
+  - "error"
+  - "failure"
+  - "crash"
+
+enhancement:
+  - "feature"
+  - "enhancement"
+  - "improvement"
+
+documentation:
+  - "docs"
+  - "documentation"
+  - "readme"
+
+question:
+  - "question"
+  - "help"
+  - "how to"
