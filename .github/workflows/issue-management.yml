@@ -1,21 +1,20 @@
-name: Issue Management
+name: Auto Label Issues
 
 on:
-    issues:
-      types: [opened, edited]
-  
+  issues:
+    types: [opened, edited]
+
 permissions:
-    issues: write
-    contents: read
-  
+  issues: write
+  contents: read
+
 jobs:
-    triage:
-      runs-on: ubuntu-latest
-      steps:
-      - uses: github/issue-labeler@v3.3
+  auto-label:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Auto-label issues
+        uses: actions/labeler@v4
         with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/labeler.yml
-          enable-versioned-regex: 0
-          include-title: 1
-          include-body: 1
-          repo-token: ${{ github.token }}
