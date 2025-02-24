@@ -13,8 +13,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Run a custom script to label issues
       - name: Auto-label issues
-        uses: actions/labeler@v4
+        uses: actions/github-script@v6
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          configuration-path: .github/labeler.yml
+          script: |
+            const keywordsToLabels = {
+              bug: ["bug", "error", "failure", "crash"],
+              enhancement: ["feature", "enhancement", "improvement"],
+              documentation: ["docs", "documentation", "readme"],
+              question: ["question", "help", "how to"]
+            };
+
+            const issue = context.payload.issue;
+            const issueTitle = issue.title.toLowerCase();
+            const issueBody = issue.body ? issue.body.toLowerCase() : "";
+
+            const labelsToAdd = [];
+
+            for (const [label, keywords] of Object.entries(keywordsToLabels)) {
+              if (keywords.some(keyword => issueTitle.includes(keyword) || issueBody.includes(keyword))) {
+                labelsToAdd.push(label);
+              }
+            }
+
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: labelsToAdd
+              });
+            }
